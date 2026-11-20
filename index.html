@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thư viện số AI • Tổng quan Trí tuệ Nhân tạo (8 Chương)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --accent: #0d9488;
+      --accent-soft: #f0fdfa;
+      --warn: #d97706;
+      --warn-soft: #fffbeb;
+      --radius: 14px;
+      --shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    }
+    body.dark {
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-alt: #1e293b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --primary: #60a5fa;
+      --primary-soft: rgba(59, 130, 246, 0.14);
+      --accent: #2dd4bf;
+      --accent-soft: rgba(45, 212, 191, 0.12);
+      --warn: #fbbf24;
+      --warn-soft: rgba(251, 191, 36, 0.12);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      transition: background 0.25s, color 0.25s;
+    }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none;
+      cursor: pointer;
+    }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 9px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .btn-primary:hover { opacity: 0.92; color: #fff; }
+    main { max-width: 980px; margin: 0 auto; padding: 28px 20px 64px; }
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+    .hero h1 { font-size: 1.65rem; margin-bottom: 8px; }
+    .hero p { color: var(--text-muted); font-size: 0.98rem; }
+    .search-bar {
+      margin-top: 18px;
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .search-bar input {
+      flex: 1; min-width: 240px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex; flex-direction: column; justify-content: space-between;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .card:hover { transform: translateY(-2px); border-color: var(--primary); }
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .chap-num {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      color: var(--primary); background: var(--primary-soft);
+      padding: 3px 10px; border-radius: 999px;
+    }
+    .badge-pptx {
+      font-size: 0.72rem; font-weight: 700;
+      color: var(--warn); background: var(--warn-soft);
+      padding: 2px 8px; border-radius: 6px;
+    }
+    .card h3 { font-size: 1.08rem; margin-bottom: 8px; line-height: 1.4; }
+    .card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .tag {
+      font-size: 0.75rem; background: var(--surface-alt); color: var(--text-muted);
+      padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border);
+    }
+    .slide-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .slide-meta {
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em;
+      color: var(--primary); text-transform: uppercase; margin-bottom: 6px;
+    }
+    .slide-title { font-size: 1.6rem; margin-bottom: 8px; }
+    .slide-lead { color: var(--text-muted); margin-bottom: 22px; font-size: 1rem; }
+    .diagram-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 12px; margin-bottom: 8px;
+    }
+    .diag-item {
+      background: var(--surface-alt); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; text-align: center;
+    }
+    .diag-icon { font-size: 1.6rem; margin-bottom: 4px; }
+    .diag-title { font-weight: 700; font-size: 0.95rem; }
+    .diag-sub { font-size: 0.82rem; color: var(--text-muted); }
+    .caption { text-align: center; font-size: 0.83rem; color: var(--text-muted); margin-bottom: 22px; font-style: italic; }
+    h2.sec-title { font-size: 1.18rem; margin: 22px 0 10px; color: var(--text); }
+    .callout {
+      background: var(--primary-soft); border-left: 4px solid var(--primary);
+      padding: 12px 16px; border-radius: 0 10px 10px 0; margin-bottom: 14px; font-size: 0.94rem;
+    }
+    .callout.tip { background: var(--accent-soft); border-left-color: var(--accent); }
+    .callout.example { background: var(--warn-soft); border-left-color: var(--warn); }
+    ul.clean { padding-left: 20px; margin-bottom: 14px; }
+    ul.clean li { margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0 18px; font-size: 0.9rem; }
+    th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    th { background: var(--surface-alt); font-weight: 700; }
+    .tool-section {
+      margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--border);
+    }
+    .tool-section h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .tool-desc { font-size: 0.84rem; color: var(--text-muted); margin-bottom: 10px; }
+    textarea {
+      width: 100%; min-height: 110px; padding: 12px;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface-alt); color: var(--text);
+      font-family: inherit; font-size: 0.92rem; resize: vertical;
+    }
+    .note-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 0.82rem; color: var(--text-muted); }
+    .link-form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .link-form select, .link-form input {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface-alt); color: var(--text); font-size: 0.88rem;
+    }
+    .link-form input { flex: 1; min-width: 200px; }
+    .link-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .link-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 12px; background: var(--surface-alt); border-radius: 8px; border: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .link-item a { color: var(--primary); text-decoration: none; word-break: break-all; }
+    .nav-footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--border); flex-wrap: wrap;
+    }
+    footer {
+      text-align: center; padding: 24px 16px; color: var(--text-muted);
+      font-size: 0.84rem; border-top: 1px solid var(--border); background: var(--surface);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="#trang-chu">🧠 Thư viện số AI</a>
+    <div class="header-actions">
+      <a class="btn" href="#trang-chu">🏠 Trang chủ</a>
+      <button class="btn" id="themeBtn" onclick="toggleTheme()">🌙 Giao diện</button>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>
+    FPT Polytechnic Tây Nguyên • Tài liệu học tập cá nhân – Tổng quan Trí tuệ Nhân tạo (8 Chương)
+  </footer>
+
+  <script>
+    const CHAPTERS = [
+      {
+        id: 1,
+        code: "01",
+        title: "Bối cảnh CMCN 4.0, CNTT 4.0 & Chuyển đổi số",
+        desc: "Từ tin học hóa truyền thống sang kỷ nguyên kết nối vạn vật, dữ liệu lớn và trí tuệ nhân tạo.",
+        tags: ["CMCN 1.0–4.0", "CNTT 4.0", "Chuyển đổi số"],
+        diagram: [
+          { icon: "⚙️", title: "CMCN 1.0 – 2.0", sub: "Cơ khí hóa & Điện khí hóa" },
+          { icon: "💻", title: "CMCN 3.0", sub: "Máy tính & Tự động hóa" },
+          { icon: "🤖", title: "CMCN 4.0", sub: "AI, IoT, Big Data, Cloud" },
+          { icon: "🚀", title: "Chuyển đổi số", sub: "Tái cấu trúc mô hình vận hành" }
+        ],
+        caption: "Hình 1. Tiến trình từ cơ khí hóa đến kỷ nguyên dữ liệu và trí tuệ nhân tạo.",
+        sec1Title: "1.1. Bốn cuộc Cách mạng Công nghiệp & CNTT 4.0",
+        sec1Quick: "Mỗi cuộc cách mạng công nghiệp gắn với một bước nhảy vọt về năng lượng và công cụ sản xuất; CMCN 4.0 xóa nhòa ranh giới vật lý – số – sinh học.",
+        sec1Bullets: [
+          "<strong>CMCN 1.0 (Cuối TK 18):</strong> Động cơ hơi nước, cơ khí hóa ngành dệt và giao thông.",
+          "<strong>CMCN 2.0 (Cuối TK 19):</strong> Điện năng và dây chuyền sản xuất hàng loạt.",
+          "<strong>CMCN 3.0 (Thập niên 1970):</strong> Bán dẫn, máy tính cá nhân, Internet và tự động hóa.",
+          "<strong>CMCN 4.0 (Hiện nay):</strong> Hội tụ của Trí tuệ nhân tạo (AI), Internet vạn vật (IoT), Dữ liệu lớn (Big Data) và Điện toán đám mây (Cloud)."
+        ],
+        sec2Title: "1.2. Phân biệt Số hóa, Tin học hóa và Chuyển đổi số",
+        sec2Quick: "Số hóa là chuyển giấy thành file; Tin học hóa là đưa quy trình lên phần mềm; Chuyển đổi số là thay đổi cách tạo ra giá trị.",
+        tableHeaders: ["Tiêu chí", "Số hóa (Digitization)", "Tin học hóa (Digitalization)", "Chuyển đổi số (Digital Transformation)"],
+        tableRows: [
+          ["Bản chất", "Chuyển đổi dữ liệu vật lý sang dạng số.", "Ứng dụng phần mềm tối ưu quy trình có sẵn.", "Thay đổi toàn diện mô hình kinh doanh & trải nghiệm."],
+          ["Trọng tâm", "Dữ liệu (Data).", "Quy trình nghiệp vụ (Process).", "Con người, văn hóa & mô hình giá trị."],
+          ["Ví dụ", "Scan hồ sơ giấy thành PDF.", "Quản lý điểm sinh viên trên phần mềm LMS.", "Học tập cá nhân hóa bằng AI phân tích hành vi."]
+        ],
+        tip: "Số hóa là “bước đi đầu tiên”, Tin học hóa là “làm nhanh hơn việc cũ”, còn Chuyển đổi số là “làm việc mới theo cách mới nhờ dữ liệu”.",
+        examples: [
+          "Quán cà phê ghi sổ giấy → chuyển sang nhập Excel (Số hóa) → dùng phần mềm POS tính tiền (Tin học hóa) → dùng app tích điểm, gợi ý món theo sở thích bằng AI (Chuyển đổi số).",
+          "Sinh viên nộp bài qua hệ thống LMS thay vì in giấy giúp giảng viên chấm điểm và thống kê tiến độ tự động."
+        ]
+      },
+      {
+        id: 2,
+        code: "02",
+        title: "Kiến trúc Phần cứng & Nguyên lý máy tính",
+        desc: "Chu trình xử lý IPOS và sự phân công giữa CPU đa năng, GPU song song và chip AI chuyên dụng DSA.",
+        tags: ["Mô hình IPOS", "CPU vs GPU vs DSA", "RAM & SSD"],
+        diagram: [
+          { icon: "⌨️", title: "Input", sub: "Bàn phím, chuột, cảm biến" },
+          { icon: "🧠", title: "Process", sub: "CPU / GPU tính toán" },
+          { icon: "🖥️", title: "Output", sub: "Màn hình, loa, máy in" },
+          { icon: "💾", title: "Storage", sub: "RAM và ổ cứng SSD" }
+        ],
+        caption: "Hình 2. Chu trình IPOS: dữ liệu đi vào, được xử lý, xuất ra và lưu lại.",
+        sec1Title: "2.1. Mô hình xử lý thông tin IPOS",
+        sec1Quick: "Mọi máy tính đều làm việc theo 4 bước: nhận – xử lý – xuất – lưu.",
+        sec1Bullets: [
+          "<strong>Input (Đầu vào):</strong> Nhận dữ liệu từ bàn phím, chuột, micro, camera, cảm biến hoặc gói tin mạng.",
+          "<strong>Process (Xử lý):</strong> Bộ vi xử lý giải mã lệnh, tính toán số học – logic, điều phối luồng dữ liệu.",
+          "<strong>Output (Đầu ra):</strong> Xuất kết quả ra màn hình, loa, máy in hoặc gửi tới máy chủ khác.",
+          "<strong>Storage (Lưu trữ):</strong> RAM tốc độ cực cao nhưng mất dữ liệu khi tắt nguồn; SSD/HDD lưu giữ bền vững."
+        ],
+        sec2Title: "2.2. So sánh CPU, GPU và DSA",
+        sec2Quick: "Ba loại chip, ba “tính cách”: đa năng, song song hàng loạt, và chuyên biệt một việc.",
+        tableHeaders: ["Đặc điểm", "CPU", "GPU", "DSA (TPU / NPU)"],
+        tableRows: [
+          ["Vai trò", "Bộ não đa năng, chạy hệ điều hành & logic phức tạp.", "Đồ họa 3D, tính toán ma trận song song, huấn luyện AI.", "Phần cứng thiết kế riêng cho tác vụ AI (Tensor/Neural)."],
+          ["Số nhân", "Ít nhân (4–64) nhưng mỗi nhân rất mạnh.", "Hàng nghìn nhân nhỏ (CUDA Cores).", "Mạch chuyên biệt (ASIC), tối ưu năng lượng."],
+          ["Cách xử lý", "Tuần tự, rẽ nhánh logic linh hoạt.", "Song song hàng loạt (SIMD).", "Cứng hóa phép nhân-cộng ma trận."],
+          ["Ví dụ", "AMD Ryzen 5 7535HS, Intel Core i7.", "NVIDIA RTX 3050, H100.", "Google TPU, Apple Neural Engine."]
+        ],
+        tip: "CPU như một Giáo sư giải từng bài toán hóc búa thật nhanh; GPU như đội quân 3.000 sinh viên cùng giải 3.000 phép cộng đơn giản — rất hợp với đồ họa pixel và mạng nơ-ron.",
+        examples: [
+          "Mở game, Chrome và Discord cùng lúc: CPU điều phối mọi việc, GPU vẽ khung hình game, RAM giữ dữ liệu đang chạy.",
+          "Điện thoại mở khóa khuôn mặt tức thì nhờ NPU (một loại DSA), không bắt CPU gánh nặng nên tiết kiệm pin."
+        ]
+      },
+      {
+        id: 3,
+        code: "03",
+        title: "Hệ điều hành (OS) & Quản lý tài nguyên",
+        desc: "Lớp phần mềm nền tảng làm cầu nối điều phối giữa phần cứng máy tính và ứng dụng người dùng.",
+        tags: ["Quản lý tiến trình", "Bộ nhớ & Tệp", "Windows vs Linux"],
+        diagram: [
+          { icon: "📱", title: "Ứng dụng (Apps)", sub: "Trình duyệt, IDE, AI Tools" },
+          { icon: "🛡️", title: "Hệ điều hành (OS)", sub: "Nhân Kernel & Giao diện" },
+          { icon: "🔌", title: "Trình điều khiển", sub: "Device Drivers" },
+          { icon: "🔧", title: "Phần cứng", sub: "CPU, RAM, SSD, GPU" }
+        ],
+        caption: "Hình 3. Hệ điều hành đóng vai trò trung gian phân bổ tài nguyên phần cứng cho ứng dụng.",
+        sec1Title: "3.1. Chức năng cốt lõi của Hệ điều hành",
+        sec1Quick: "OS là “người quản lý tòa nhà”: chia phòng (RAM), phân lịch thang máy (CPU) và giữ chìa khóa kho (SSD).",
+        sec1Bullets: [
+          "<strong>Quản lý tiến trình (Process Management):</strong> Lập lịch CPU, chuyển đổi ngữ cảnh giúp máy chạy đa nhiệm mượt mà.",
+          "<strong>Quản lý bộ nhớ (Memory Management):</strong> Cấp phát và thu hồi RAM cho từng chương trình, tránh xung đột vùng nhớ.",
+          "<strong>Quản lý hệ thống tệp (File System):</strong> Tổ chức dữ liệu thành thư mục, tập tin (NTFS, APFS, ext4) và phân quyền truy cập.",
+          "<strong>Quản lý thiết bị (I/O Management):</strong> Giao tiếp với chuột, bàn phím, card mạng thông qua Driver."
+        ],
+        sec2Title: "3.2. So sánh Windows, macOS và Linux",
+        sec2Quick: "Windows phổ biến cho văn phòng/game, macOS tối ưu hệ sinh thái Apple, Linux thống trị máy chủ và hạ tầng AI.",
+        tableHeaders: ["Tiêu chí", "Windows", "macOS", "Linux (Ubuntu, Debian)"],
+        tableRows: [
+          ["Bản quyền", "Thương mại (đóng mã nguồn).", "Độc quyền trên phần cứng Apple.", "Mã nguồn mở, miễn phí."],
+          ["Thế mạnh", "Tương thích phần mềm & game rộng nhất.", "Ổn định, tối ưu đồ họa & pin.", "Nhẹ, bảo mật cao, dòng lệnh mạnh mẽ."],
+          ["Ứng dụng chính", "PC cá nhân, doanh nghiệp.", "Thiết kế sáng tạo, lập trình.", "Máy chủ Cloud, siêu máy tính huấn luyện AI."]
+        ],
+        tip: "Hơn 90% máy chủ đám mây và cụm GPU huấn luyện AI trên thế giới chạy Linux vì tính ổn định, nhẹ và tự động hóa tốt qua dòng lệnh.",
+        examples: [
+          "Khi máy bị treo một ứng dụng, bạn mở Task Manager (Windows) hoặc System Monitor (Linux) để kết thúc tiến trình (Kill Process) và giải phóng RAM.",
+          "Khi chạy mô hình AI trên Google Colab, thực chất bạn đang thao tác trên một máy chủ Linux từ xa."
+        ]
+      },
+      {
+        id: 4,
+        code: "04",
+        title: "Phần mềm ứng dụng, Ảo hóa & Điện toán đám mây",
+        desc: "Tiến hóa từ cài đặt cục bộ sang ảo hóa máy chủ (VM), Container (Docker) và điện toán đám mây IaaS/PaaS/SaaS.",
+        tags: ["Open Source", "VM vs Docker", "IaaS · PaaS · SaaS"],
+        diagram: [
+          { icon: "🖥️", title: "Máy vật lý", sub: "Cài trực tiếp 1 OS" },
+          { icon: "📦", title: "Máy ảo (VM)", sub: "Ảo hóa cả phần cứng & OS" },
+          { icon: "🐳", title: "Container (Docker)", sub: "Đóng gói app & thư viện" },
+          { icon: "☁️", title: "Cloud Computing", sub: "Thuê tài nguyên qua Internet" }
+        ],
+        caption: "Hình 4. Từ cài đặt đơn lẻ đến đóng gói Container và triển khai trên đám mây.",
+        sec1Title: "4.1. Phần mềm mã nguồn mở & Ảo hóa (VM vs Docker)",
+        sec1Quick: "Máy ảo (VM) giống như xây cả căn nhà riêng; Container (Docker) giống như thuê căn hộ chung cư dùng chung hạ tầng.",
+        sec1Bullets: [
+          "<strong>Phần mềm Mã nguồn mở (Open Source):</strong> Cho phép xem, sửa và phân phối lại mã nguồn (ví dụ: Linux, Python, PyTorch, VS Code).",
+          "<strong>Máy ảo (Virtual Machine - VM):</strong> Giả lập phần cứng hoàn chỉnh, mỗi VM chạy một hệ điều hành riêng nên nặng và khởi động chậm.",
+          "<strong>Container (Docker):</strong> Đóng gói ứng dụng cùng thư viện cần thiết, dùng chung nhân OS máy chủ nên khởi động chỉ mất vài giây."
+        ],
+        sec2Title: "4.2. Ba mô hình dịch vụ đám mây: IaaS, PaaS, SaaS",
+        sec2Quick: "Khác biệt nằm ở mức độ bạn tự quản lý hạ tầng hay dùng sẵn dịch vụ hoàn chỉnh.",
+        tableHeaders: ["Mô hình", "Viết tắt", "Nhà cung cấp lo", "Người dùng sử dụng", "Ví dụ thực tế"],
+        tableRows: [
+          ["IaaS", "Infrastructure as a Service", "Máy chủ vật lý, mạng, lưu trữ.", "Tự cài OS, môi trường và ứng dụng.", "AWS EC2, Google Compute Engine."],
+          ["PaaS", "Platform as a Service", "Hạ tầng + Hệ điều hành + Runtime.", "Chỉ tập trung viết code và dữ liệu.", "Google Colab, Heroku, Firebase."],
+          ["SaaS", "Software as a Service", "Toàn bộ từ hạ tầng đến phần mềm.", "Đăng nhập và dùng ngay trên web/app.", "Google Docs, ChatGPT, Canva."]
+        ],
+        tip: "Nhớ theo độ tiện lợi: IaaS thuê “mặt bằng trống”, PaaS thuê “bếp đã lắp sẵn thiết bị”, còn SaaS là “vào nhà hàng gọi món ăn ngay”.",
+        examples: [
+          "Sinh viên dùng Google Docs làm báo cáo nhóm mà không cần cài Office: đó là SaaS.",
+          "Lập trình viên đóng gói ứng dụng web bằng Docker để đảm bảo “chạy được trên máy mình thì cũng chạy y hệt trên máy chủ”."
+        ]
+      },
+      {
+        id: 5,
+        code: "05",
+        title: "Mạng máy tính, Internet & Hệ sinh thái IoT",
+        desc: "Cách dữ liệu di chuyển toàn cầu qua IP, DNS, Client-Server và thiết bị IoT kết nối thế giới vật lý.",
+        tags: ["IP & DNS", "TCP vs UDP", "Kiến trúc 3 tầng IoT"],
+        diagram: [
+          { icon: "📡", title: "Tầng Thiết bị (Edge)", sub: "Cảm biến, camera, actuator" },
+          { icon: "🌐", title: "Tầng Mạng (Network)", sub: "Wi-Fi, 5G, MQTT, IP/DNS" },
+          { icon: "☁️", title: "Tầng Ứng dụng & Cloud", sub: "Lưu trữ, phân tích AI, App" },
+          { icon: "📲", title: "Người dùng cuối", sub: "Điều khiển & giám sát" }
+        ],
+        caption: "Hình 5. Kiến trúc 3 tầng của hệ sinh thái Internet vạn vật (IoT).",
+        sec1Title: "5.1. IP, DNS và mô hình Client – Server",
+        sec1Quick: "IP là địa chỉ nhà trên Internet; DNS là danh bạ điện thoại dịch tên miền dễ nhớ sang địa chỉ IP.",
+        sec1Bullets: [
+          "<strong>Địa chỉ IP:</strong> Định danh duy nhất cho mỗi thiết bị khi tham gia mạng (IPv4 dạng 192.168.1.1 hoặc IPv6).",
+          "<strong>DNS (Domain Name System):</strong> Chuyển đổi tên miền (như google.com) thành địa chỉ IP để trình duyệt kết nối.",
+          "<strong>Client – Server:</strong> Máy khách (trình duyệt/app) gửi yêu cầu (Request), máy chủ xử lý và trả kết quả (Response)."
+        ],
+        sec2Title: "5.2. So sánh giao thức TCP và UDP",
+        sec2Quick: "TCP ưu tiên độ chính xác tuyệt đối; UDP ưu tiên tốc độ thời gian thực.",
+        tableHeaders: ["Đặc điểm", "TCP (Transmission Control Protocol)", "UDP (User Datagram Protocol)"],
+        tableRows: [
+          ["Độ tin cậy", "Rất cao: kiểm tra lỗi, gửi lại gói tin bị mất.", "Không đảm bảo: gửi đi liên tục, chấp nhận rơi gói."],
+          ["Tốc độ", "Chậm hơn do phải bắt tay và xác nhận.", "Rất nhanh, độ trễ thấp."],
+          ["Ứng dụng", "Tải web (HTTP/HTTPS), gửi email, tải file.", "Livestream, gọi video, game online bắn súng."]
+        ],
+        tip: "TCP giống như gửi thư bảo đảm có ký nhận; UDP giống như phát thanh trực tiếp — lỡ mất một giây âm thanh thì phát tiếp chứ không tua lại.",
+        examples: [
+          "Khi chơi game đối kháng hoặc họp trực tuyến, mạng dùng UDP để hình ảnh không bị khựng chờ gói tin cũ.",
+          "Hệ thống tưới tiêu thông minh ở vườn cà phê Tây Nguyên đo độ ẩm đất (Cảm biến) → gửi qua 4G/Wi-Fi lên Cloud → tự bật máy bơm khi đất khô."
+        ]
+      },
+      {
+        id: 6,
+        code: "06",
+        title: "Tư duy tính toán, Thuật toán & Tự động hóa",
+        desc: "Bốn trụ cột tư duy máy tính giải quyết vấn đề và sự khác biệt giữa lập trình truyền thống và Học máy.",
+        tags: ["4 trụ cột tư duy", "Thuật toán", "Rule-based vs ML"],
+        diagram: [
+          { icon: "🧩", title: "Phân rã (Decomposition)", sub: "Chia bài toán lớn thành nhỏ" },
+          { icon: "🔍", title: "Nhận diện mẫu", sub: "Tìm quy luật lặp lại" },
+          { icon: "🎯", title: "Trừu tượng hóa", sub: "Giữ ý chính, bỏ chi tiết thừa" },
+          { icon: "📝", title: "Thiết kế thuật toán", sub: "Viết các bước giải tuần tự" }
+        ],
+        caption: "Hình 6. Bốn trụ cột của Tư duy tính toán (Computational Thinking).",
+        sec1Title: "6.1. Bốn trụ cột Tư duy tính toán & Thuật toán",
+        sec1Quick: "Tư duy tính toán không chỉ dành cho lập trình viên, mà là cách tổ chức vấn đề để con người hoặc máy tính giải quyết hiệu quả.",
+        sec1Bullets: [
+          "<strong>Phân rã (Decomposition):</strong> Chia một dự án phức tạp thành nhiều phần việc nhỏ dễ xử lý.",
+          "<strong>Nhận diện mẫu (Pattern Recognition):</strong> Tìm điểm tương đồng giữa các vấn đề để áp dụng lại giải pháp.",
+          "<strong>Trừu tượng hóa (Abstraction):</strong> Lọc bỏ thông tin nhiễu, tập trung vào yếu tố cốt lõi.",
+          "<strong>Thuật toán (Algorithm):</strong> Tập hợp hữu hạn các bước chỉ dẫn rõ ràng từ đầu vào đến đầu ra."
+        ],
+        sec2Title: "6.2. Lập trình truyền thống (Rule-based) vs Học máy (ML)",
+        sec2Quick: "Lập trình truyền thống cần con người viết luật; Học máy để máy tự rút ra luật từ dữ liệu.",
+        tableHeaders: ["Tiêu chí", "Lập trình truyền thống (Rule-based)", "Học máy (Machine Learning)"],
+        tableRows: [
+          ["Đầu vào", "Dữ liệu + Quy tắc (If – Else do người viết).", "Dữ liệu + Kết quả mẫu (Nhãn)."],
+          ["Đầu ra", "Kết quả xử lý.", "Mô hình (Bộ quy tắc tự học được)."],
+          ["Khả năng mở rộng", "Khó viết luật cho bài toán phức tạp (nhận diện ảnh).", "Càng nhiều dữ liệu chất lượng, độ chính xác càng cao."]
+        ],
+        tip: "Rule-based giống như nấu ăn theo công thức định lượng sẵn; Machine Learning giống như đầu bếp nếm thử hàng nghìn món để tự rút ra bí quyết nêm nếm.",
+        examples: [
+          "Tính điểm trung bình và xếp loại học lực (Giỏi/Khá/TB) dùng hàm IF trong Excel là Rule-based.",
+          "Bộ lọc thư rác Gmail tự nhận biết email lừa đảo mới xuất hiện dựa trên hàng tỷ email mẫu là Machine Learning."
+        ]
+      },
+      {
+        id: 7,
+        code: "07",
+        title: "Trí tuệ nhân tạo (AI), Dữ liệu lớn & Prompt",
+        desc: "Cơ chế vận hành của AI/ML/DL/GenAI, dữ liệu 5V, hiện tượng ảo giác và kỹ thuật Prompt Engineering.",
+        tags: ["AI · ML · DL · GenAI", "Prompt R-T-F", "Ảo giác AI"],
+        diagram: [
+          { icon: "🧠", title: "AI (Trí tuệ nhân tạo)", sub: "Máy mô phỏng trí thông minh" },
+          { icon: "📊", title: "Machine Learning", sub: "Học quy luật từ dữ liệu" },
+          { icon: "🕸️", title: "Deep Learning", sub: "Mạng nơ-ron nhiều lớp sâu" },
+          { icon: "✨", title: "Generative AI", sub: "Tạo văn bản, ảnh, mã nguồn mới" }
+        ],
+        caption: "Hình 7. Mối quan hệ bao hàm từ Trí tuệ nhân tạo (AI) đến AI tạo sinh (GenAI).",
+        sec1Title: "7.1. Dữ liệu lớn 5V, AI tạo sinh & Hiện tượng Ảo giác",
+        sec1Quick: "Dữ liệu là nhiên liệu của AI; GenAI dự đoán token tiếp theo nên đôi khi tự tin tạo ra thông tin sai (Hallucination).",
+        sec1Bullets: [
+          "<strong>Big Data 5V:</strong> Volume (Khối lượng lớn), Velocity (Tốc độ nhanh), Variety (Đa dạng định dạng), Veracity (Độ tin cậy), Value (Giá trị khai thác).",
+          "<strong>Cơ chế LLM (Mô hình ngôn ngữ lớn):</strong> Dự đoán từ/token tiếp theo có xác suất hợp lý nhất dựa trên ngữ cảnh, không phải tra cứu từ điển.",
+          "<strong>Ảo giác AI (Hallucination):</strong> Hiện tượng AI bịa ra số liệu, trích dẫn hoặc sự kiện không có thật nhưng trình bày rất trôi chảy."
+        ],
+        sec2Title: "7.2. Kỹ thuật viết Prompt chuẩn R-T-F",
+        sec2Quick: "Prompt càng rõ vai trò, nhiệm vụ và định dạng đầu ra thì kết quả càng sát nhu cầu.",
+        tableHeaders: ["Thành phần", "Ý nghĩa", "Ví dụ áp dụng"],
+        tableRows: [
+          ["R – Role (Vai trò)", "Định vị chuyên môn cho AI.", "“Hãy đóng vai giảng viên môn Tin học ứng dụng...”"],
+          ["T – Task (Nhiệm vụ)", "Nêu rõ hành động & bối cảnh cụ thể.", "“...giải thích sự khác nhau giữa RAM và SSD cho sinh viên năm nhất...”"],
+          ["F – Format (Định dạng)", "Quy định cách trình bày kết quả.", "“...trình bày dưới dạng bảng so sánh 4 tiêu chí kèm 1 ví dụ dễ hiểu.”"]
+        ],
+        tip: "Đừng chỉ hỏi “Viết cho tôi bài về AI”. Hãy dùng công thức R-T-F (Role – Task – Format) và luôn kiểm chứng lại các số liệu, trích dẫn quan trọng.",
+        examples: [
+          "Khi nhờ AI tóm tắt tài liệu học tập, hãy dán trực tiếp đoạn văn bản nguồn vào và yêu cầu “Chỉ trả lời dựa trên nội dung được cung cấp” để giảm thiểu ảo giác AI.",
+          "Dùng GenAI để gợi ý cấu trúc slide thuyết trình, sau đó tự biên tập lại nội dung và ví dụ thực tế của nhóm."
+        ]
+      },
+      {
+        id: 8,
+        code: "08",
+        title: "An toàn thông tin, Bảo vệ dữ liệu & Đạo đức AI",
+        desc: "Tam giác bảo mật CIA, phòng chống lừa đảo Phishing/Malware, xác thực 2FA và liêm chính học thuật.",
+        tags: ["Tam giác CIA", "Phòng chống Phishing", "Đạo đức & Liêm chính"],
+        diagram: [
+          { icon: "🔒", title: "Confidentiality", sub: "Tính bí mật (mã hóa, phân quyền)" },
+          { icon: "✅", title: "Integrity", sub: "Tính toàn vẹn (không bị sửa đổi)" },
+          { icon: "⚡", title: "Availability", sub: "Tính sẵn sàng (hoạt động liên tục)" },
+          { icon: "⚖️", title: "Đạo đức AI", sub: "Minh bạch, công bằng, liêm chính" }
+        ],
+        caption: "Hình 8. Tam giác bảo mật thông tin CIA kết hợp nguyên tắc sử dụng AI có trách nhiệm.",
+        sec1Title: "8.1. Tam giác CIA & Phòng chống tấn công mạng",
+        sec1Quick: "Bảo mật thông tin đứng vững trên 3 chân: Bí mật – Toàn vẹn – Sẵn sàng; đa số sự cố bắt nguồn từ sự chủ quan của người dùng.",
+        sec1Bullets: [
+          "<strong>Phishing (Lừa đảo giả mạo):</strong> Tin nhắn/email giả danh ngân hàng, trường học chứa link độc hại nhằm đánh cắp mật khẩu hoặc mã OTP.",
+          "<strong>Malware & Ransomware:</strong> Phần mềm độc hại ẩn trong file crack, phần mềm lậu để theo dõi hoặc mã hóa dữ liệu đòi tiền chuộc.",
+          "<strong>Xác thực 2 yếu tố (2FA):</strong> Lớp bảo vệ thứ hai (mã OTP, ứng dụng Authenticator) giúp tài khoản an toàn ngay cả khi lộ mật khẩu."
+        ],
+        sec2Title: "8.2. An toàn dữ liệu & Liêm chính học thuật với AI",
+        sec2Quick: "AI là trợ lý hỗ trợ tư duy, không phải công cụ làm thay hay nơi nạp dữ liệu nhạy cảm.",
+        tableHeaders: ["Nguyên tắc", "Nên làm", "Tuyệt đối tránh"],
+        tableRows: [
+          ["Bảo vệ dữ liệu cá nhân", "Ẩn danh hóa thông tin trước khi đưa vào công cụ AI.", "Nhập mật khẩu, số CCCD, thẻ ngân hàng, dữ liệu nội bộ lên AI công cộng."],
+          ["Nhận diện Deepfake", "Xác minh qua cuộc gọi trực tiếp hoặc kênh chính thống khi có yêu cầu chuyển tiền.", "Tin ngay video/giọng nói người thân gọi mượn tiền gấp qua mạng."],
+          ["Liêm chính học thuật", "Dùng AI gợi ý ý tưởng, kiểm tra ngữ pháp, giải thích khái niệm.", "Copy nguyên văn bài do AI viết để nộp bài tập/tiểu luận."]
+        ],
+        tip: "Quy tắc 3 Không trên không gian mạng: Không bấm link lạ — Không cung cấp mã OTP — Không tải phần mềm bẻ khóa (Crack).",
+        examples: [
+          "Bật 2FA cho tài khoản Google, Facebook và email sinh viên để ngăn chặn nguy cơ bị chiếm quyền điều khiển.",
+          "Khi làm bài tiểu luận, bạn dùng AI lập dàn ý và kiểm tra lỗi chính tả, sau đó tự viết nội dung bằng kiến thức của mình và ghi chú rõ phần hỗ trợ của AI."
+        ]
+      }
+    ];
+
+    let isDark = localStorage.getItem("ai_lib_dark") === "1";
+    if (isDark) document.body.classList.add("dark");
+
+    function toggleTheme() {
+      isDark = !isDark;
+      document.body.classList.toggle("dark", isDark);
+      localStorage.setItem("ai_lib_dark", isDark ? "1" : "0");
+    }
+
+    function getNotes(id) {
+      return localStorage.getItem(`ai_lib_note_${id}`) || "";
+    }
+
+    function saveNotes(id, val) {
+      localStorage.setItem(`ai_lib_note_${id}`, val);
+      const counter = document.getElementById("charCount");
+      if (counter) counter.textContent = `${val.length}/3000 ký tự`;
+    }
+
+    function clearNotes(id) {
+      localStorage.removeItem(`ai_lib_note_${id}`);
+      const ta = document.getElementById("noteArea");
+      if (ta) {
+        ta.value = "";
+        saveNotes(id, "");
+      }
+    }
+
+    function getLinks(id) {
+      try {
+        return JSON.parse(localStorage.getItem(`ai_lib_links_${id}`) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function addLink(id) {
+      const typeEl = document.getElementById("linkType");
+      const urlEl = document.getElementById("linkUrl");
+      const url = urlEl.value.trim();
+      if (!url) return;
+      const links = getLinks(id);
+      links.push({ type: typeEl.value, url });
+      localStorage.setItem(`ai_lib_links_${id}`, JSON.stringify(links));
+      urlEl.value = "";
+      renderLinks(id);
+    }
+
+    function removeLink(id, idx) {
+      const links = getLinks(id);
+      links.splice(idx, 1);
+      localStorage.setItem(`ai_lib_links_${id}`, JSON.stringify(links));
+      renderLinks(id);
+    }
+
+    function renderLinks(id) {
+      const container = document.getElementById("linkList");
+      if (!container) return;
+      const links = getLinks(id);
+      if (links.length === 0) {
+        container.innerHTML = `<div style="font-size:0.84rem;color:var(--text-muted)">Chưa có link tham khảo cá nhân nào cho chương này.</div>`;
+        return;
+      }
+      container.innerHTML = links.map((l, i) => `
+        <div class="link-item">
+          <div>
+            <strong>${l.type === "video" ? "🎬 Video" : "🌐 Web"}:</strong>
+            <a href="${l.url}" target="_blank" rel="noopener">${l.url}</a>
+          </div>
+          <button class="btn" style="padding:3px 9px;font-size:0.78rem" onclick="removeLink(${id}, ${i})">Xóa</button>
+        </div>
+      `).join("");
+    }
+
+    function renderHome(filter = "") {
+      const q = filter.trim().toLowerCase();
+      const filtered = CHAPTERS.filter(c =>
+        c.title.toLowerCase().includes(q) ||
+        c.desc.toLowerCase().includes(q) ||
+        c.tags.some(t => t.toLowerCase().includes(q))
+      );
+
+      document.getElementById("app").innerHTML = `
+        <section class="hero">
+          <h1>📚 Thư viện số AI — Tổng quan Trí tuệ Nhân tạo</h1>
+          <p>Hệ thống tài liệu học tập tương tác gồm 8 chương cốt lõi: từ nền tảng CMCN 4.0, kiến trúc phần cứng, mạng & đám mây đến tư duy thuật toán, AI tạo sinh và an toàn thông tin.</p>
+          <div class="search-bar">
+            <input type="text" id="searchInput" value="${filter}" placeholder="🔍 Tìm kiếm chương, khái niệm (VD: IPOS, Docker, Prompt, CIA...)" oninput="renderHome(this.value)" />
+          </div>
+        </section>
+        <section class="grid">
+          ${filtered.map(c => `
+            <article class="card">
+              <div>
+                <div class="card-top">
+                  <span class="chap-num">${c.code} Chương ${c.id}</span>
+                  <span class="badge-pptx">PPTX</span>
+                </div>
+                <h3>${c.title}</h3>
+                <p>${c.desc}</p>
+                <div class="tags">
+                  ${c.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+                </div>
+              </div>
+              <a class="btn btn-primary" style="justify-content:center" href="#chuong-${c.id}">Vào học bài này →</a>
+            </article>
+          `).join("")}
+        </section>
+      `;
+      const input = document.getElementById("searchInput");
+      if (input && filter) {
+        input.focus();
+        input.setSelectionRange(filter.length, filter.length);
+      }
+    }
+
+    function renderChapter(id) {
+      const c = CHAPTERS.find(item => item.id === id) || CHAPTERS[0];
+      const prevBtn = c.id > 1
+        ? `<a class="btn" href="#chuong-${c.id - 1}">← Chương ${c.id - 1}</a>`
+        : `<span class="btn" style="opacity:0.45;pointer-events:none">← Đầu khóa học</span>`;
+      const nextBtn = c.id < CHAPTERS.length
+        ? `<a class="btn" href="#chuong-${c.id + 1}">Chương ${c.id + 1} →</a>`
+        : `<span class="btn" style="opacity:0.45;pointer-events:none">Hoàn thành 8 chương ✓</span>`;
+
+      const noteVal = getNotes(c.id);
+
+      document.getElementById("app").innerHTML = `
+        <article class="slide-box">
+          <div class="slide-meta">CHƯƠNG / SLIDE ${c.code}</div>
+          <h1 class="slide-title">${c.title}</h1>
+          <p class="slide-lead">${c.desc}</p>
+
+          <div class="diagram-grid">
+            ${c.diagram.map(d => `
+              <div class="diag-item">
+                <div class="diag-icon">${d.icon}</div>
+                <div class="diag-title">${d.title}</div>
+                <div class="diag-sub">${d.sub}</div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="caption">${c.caption}</div>
+
+          <h2 class="sec-title">${c.sec1Title}</h2>
+          <div class="callout"><strong>💡 Hiểu nhanh:</strong> ${c.sec1Quick}</div>
+          <ul class="clean">
+            ${c.sec1Bullets.map(b => `<li>${b}</li>`).join("")}
+          </ul>
+
+          <h2 class="sec-title">${c.sec2Title}</h2>
+          <div class="callout"><strong>💡 Hiểu nhanh:</strong> ${c.sec2Quick}</div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>${c.tableHeaders.map(h => `<th>${h}</th>`).join("")}</tr>
+              </thead>
+              <tbody>
+                ${c.tableRows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout tip"><strong>💡 Mẹo nhớ:</strong> ${c.tip}</div>
+
+          <div class="callout example">
+            <strong>🎓 Ví dụ thực tế cho sinh viên</strong>
+            <ul class="clean" style="margin-top:6px;margin-bottom:0">
+              ${c.examples.map(ex => `<li>${ex}</li>`).join("")}
+            </ul>
+          </div>
+
+          <div class="tool-section">
+            <h3>📝 Ghi chú của tôi về slide này</h3>
+            <p class="tool-desc">Ghi lại ý chính bạn rút ra hoặc câu hỏi cần hỏi giảng viên. Ghi chú tự động lưu trong trình duyệt của bạn.</p>
+            <textarea id="noteArea" maxlength="3000" placeholder="Nhập ghi chú cá nhân cho Chương ${c.id}..." oninput="saveNotes(${c.id}, this.value)">${noteVal}</textarea>
+            <div class="note-bar">
+              <span id="charCount">${noteVal.length}/3000 ký tự</span>
+              <button class="btn" onclick="clearNotes(${c.id})">Xóa ghi chú</button>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>🔗 Link tham khảo của chương này</h3>
+            <p class="tool-desc">Dán thêm link video (YouTube…) hoặc trang web liên quan để tra cứu nhanh; link được lưu ngay trong trình duyệt.</p>
+            <div class="link-form">
+              <select id="linkType">
+                <option value="video">🎬 Video</option>
+                <option value="web">🌐 Web</option>
+              </select>
+              <input type="url" id="linkUrl" placeholder="https://..." />
+              <button class="btn btn-primary" onclick="addLink(${c.id})">Thêm</button>
+            </div>
+            <div class="link-list" id="linkList"></div>
+          </div>
+
+          <div class="nav-footer">
+            ${prevBtn}
+            <a class="btn" href="#trang-chu">🏠 Trang chủ</a>
+            ${nextBtn}
+          </div>
+        </article>
+      `;
+      renderLinks(c.id);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function router() {
+      const hash = window.location.hash || "#trang-chu";
+      const match = hash.match(/^#chuong-(\d+)$/);
+      if (match) {
+        renderChapter(parseInt(match[1], 10));
+      } else {
+        renderHome();
+      }
+    }
+
+    window.addEventListener("hashchange", router);
+    router();
+  </script>
+</body>
+</html>
